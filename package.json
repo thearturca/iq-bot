@@ -2,7 +2,7 @@
   "name": "iq-bot",
   "productName": "200iqbot",
   "version": "0.0.1",
-  "description": "twitch bot",
+  "description": "Простой бот для Twitch.tv",
   "main": "src/main.js",
   "repository": {
     "type": "git",
@@ -30,7 +30,8 @@
         {
           "name": "@electron-forge/publisher-github",
           "config": {
-            "authToken": "5d2eeba0cf0c0aea183b6ad23999a941d47b5747",
+            "authToken": "8afc2935cbfd7d887de9d19621278ec4afa8d363",
+            "targets": ["squirrel", "zip"],
             "platforms": ["win32"],
             "repository": {
               "owner": "thearturca",
