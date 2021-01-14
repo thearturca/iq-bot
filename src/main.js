@@ -1,36 +1,49 @@
 require('update-electron-app')();
 const fs = require('fs');
-const dir1 = './config';
-const dir2 ='./db'
+const path = require('path');
+const { app, BrowserWindow, Menu, Tray, ipcMain } = require('electron');
+const keytar = require('keytar')
 
-if (!fs.existsSync(dir1)){
-    fs.mkdirSync(dir1);
+const appName = '200iqbot';
+if (!fs.existsSync(path.join(app.getPath('documents'), appName))){
+  fs.mkdirSync(path.join(app.getPath('documents'), appName));
 }
 
-if (!fs.existsSync(dir2)){
-  fs.mkdirSync(dir2);
+const dirConfig = path.join(app.getPath('documents'), appName,'config');
+const dirDB = path.join(app.getPath('documents'), appName, 'db');
+
+if (!fs.existsSync(dirConfig)){
+    fs.mkdirSync(dirConfig);
 }
 
-
+if (!fs.existsSync(dirDB)){
+  fs.mkdirSync(dirDB);
+}
 
 const axios = require('axios');
-const { app, BrowserWindow, Menu, Tray, ipcMain } = require('electron');
 
 if (require('electron-squirrel-startup')) return app.quit();
+console.log(app.getPath('documents'));
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+
 const url = require('url');
-const path = require('path');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const Bot = require('./bot.js');
 
-const adaptertwtichConfig = new FileSync('./config/userconfig.json');
+const adaptertwtichConfig = new FileSync(path.join(dirConfig,'userconfig.json'));
 const twitchConfig = low(adaptertwtichConfig);
 
 twitchConfig.defaults ({
-  twitch:{
+  twitch:
+    {
       username: '',
-      password: '',
-  },
+    },
   UI:[
     {
       title: 'default',
@@ -41,11 +54,16 @@ twitchConfig.defaults ({
 
 class User{
   constructor(){
+    console.log(twitchConfig.get('twitch').value())
     this.username = twitchConfig.get('twitch').value().username;
     this.username = this.username.trim();
-
-    this.password = twitchConfig.get('twitch').value().password;
-    this.password = this.password.trim();
+    if(this.username == ''){
+      this.password = '';
+    }else{
+      this.password = keytar.getPassword(appName, this.username);
+      this.password = this.password.trim();
+    }
+    
    
     const UISetting = twitchConfig.get('UI');
 
@@ -78,7 +96,6 @@ let mainWin;
 let twitchLoginWin;
 let tray = null;
 const iconPath = path.join(__dirname, 'resources', 'fav_ico.ico');
-console.log(__dirname)
 
 const createMainWin = () => {
   mainWin = new BrowserWindow({
@@ -259,6 +276,14 @@ app.on('quit', () => {
   bot.stop();
 })
 
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWin) {
+    if (mainWin.isMinimized()) mainWin.restore()
+    mainWin.focus()
+  }
+})
+
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     mainWin = createWindow();
@@ -274,17 +299,14 @@ ipcMain.on('twitchLogin', function() {
    let accessToken = oauthHash.substr(oauthHash.indexOf('access_token=')).split('&')[0].split('=')[1];
    user.password = accessToken;
  
-   twitchConfig.get('twitch').assign({
-     password: accessToken
-   }).write();
- 
    axios.get('https://id.twitch.tv/oauth2/validate', {headers: {'Authorization': `OAuth ${accessToken}`}})
    .then((response) => {
-     console.log(response);
      twitchConfig.get('twitch').assign({
        username: response.data['login']
      }).write();
      user.username = response.data['login'];
+     user.password = accessToken;
+     keytar.setPassword(appName, user.username, accessToken)
      bot = new Bot(user.username, user.password);
      mainWin.loadURL(indexHtmlpath);
      twitchLoginWin.close();
@@ -302,4 +324,4 @@ ipcMain.on('twitchLogin', function() {
 });
 
 
-
+}

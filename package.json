@@ -1,7 +1,7 @@
 {
   "name": "iq-bot",
   "productName": "200iqbot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Простой бот для Twitch.tv",
   "main": "src/main.js",
   "repository": {
@@ -63,6 +63,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "electron-squirrel-startup": "^1.0.0",
+    "keytar": "^7.3.0",
     "lowdb": "^1.0.0",
     "tmi.js": "^1.7.1",
     "update-electron-app": "^2.0.1"

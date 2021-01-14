@@ -2,8 +2,13 @@ const tmi = require ('tmi.js');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const _ = require('lodash');
+const path = require('path');
+const { app } = require('electron');
 
-const adapterBotConfig = new FileSync('./config/botconfig.json');
+const dirConfig = path.join(app.getPath('documents'), '200iqbot', 'config');
+const dirDB = path.join(app.getPath('documents'), '200iqbot', 'db');
+
+const adapterBotConfig = new FileSync(path.join(dirConfig, 'botconfig.json'));
 const botConfig = low(adapterBotConfig);
 
 botConfig.defaults ({
@@ -34,7 +39,7 @@ class IqTest {
     
     constructor (target){
         this._target = target;
-        const adapterIQ = new FileSync(`db/iq-db-${this._target}.json`);
+        const adapterIQ = new FileSync(path.join(dirDB,`iq-db-${this._target}.json`));
         this._iqDB = low(adapterIQ);
         this._iqDB.defaults({ 
             users: []
