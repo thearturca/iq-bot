@@ -42,13 +42,13 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "200iqbot"
+            "name": "200IQBot"
           }
         },
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "win32"
+            "darwin"
           ]
         }
       ]
@@ -56,11 +56,9 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "dotenv": "^8.2.0",
     "electron-squirrel-startup": "^1.0.0",
-    "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
-    "tmi.js": "^1.5.0",
+    "tmi.js": "^1.7.1",
     "update-electron-app": "^2.0.1"
   },
   "devDependencies": {
@@ -70,8 +68,6 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
-    "@octokit/core": "^3.2.4",
-    "electron": "11.1.1",
-    "electron-prebuilt-compile": "8.2.0"
+    "electron": "11.2.0"
   }
 }
