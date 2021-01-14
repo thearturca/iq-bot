@@ -29,9 +29,8 @@
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
+          "platforms": ["win32"],
           "config": {
-            "authToken": "8afc2935cbfd7d887de9d19621278ec4afa8d363",
-            "targets": ["squirrel", "zip"],
             "platforms": ["win32"],
             "repository": {
               "owner": "thearturca",
@@ -51,7 +50,7 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "win32"
           ]
         }
       ]
