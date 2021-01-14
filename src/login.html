@@ -1,0 +1,105 @@
+<html lang="en">
+<head>
+    <title>200IQ Bot</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        main .container{
+    justify-content: center;
+    align-items: center;
+}
+    </style>
+</head>
+<body class="light-theme"><div class="body">
+    <!-- Loading screen -->
+    <div class="loading-container">
+        <div class="loading-circle-container">
+            <i class="loading-circle"></i>
+        </div>
+        <div class="loading">
+            Загрузка...
+        </div>
+    </div>
+
+    <!-- Notice block -->
+    <div class="notice-container hide" id="notice">
+        <div class="notice-header">
+            <div class="notice-title" id='notice-title'>
+                <h3>Notice-title</h3> 
+            </div>
+        </div>
+        <div class="notice-body" id="notice-body">
+            <p>
+                Notice body
+            </p>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="left-side">
+                <div class="logo">
+                    200IQ Bot
+                </div>
+                <div class="info">
+                    Добро пожаловать! Для начала нужно авторизоваться 
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="settings-container">
+                    <a class="settings"></a>
+                </div>
+                <div class="close-container">
+                    <a class="close" id="close-btn">
+                        <i class="close-icon"></i>
+                    </a>  
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <span class="btn-login-container">
+                <button class="btn-login-twitch" id="btn-login-twitch">
+                    Войти с помощью Twitch
+                </button>
+            </span>
+        </div>
+    </main>
+</div></body>
+<script>
+    const electron = require('electron');
+    const {ipcRenderer} = electron; 
+    const UIModule = require('./UI.js');
+    const UI = UIModule.UI;
+
+    const twitchLoginBtn = document.querySelector("#btn-login-twitch");
+    const headerCloseBtn = document.querySelector('header').querySelector('#close-btn');
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ipcRenderer.invoke('checkUserforLogin', {state: false}).then((result) => {
+                if (result){
+                    ipcRenderer.invoke('checkUserforLogin', { state: true});  
+                } else {
+                    document.querySelector('body').classList.add('loaded');   
+                }
+                 
+            });     
+    });   
+
+    twitchLoginBtn.addEventListener('click', twitchLoginWindow);
+    function twitchLoginWindow(e) {
+        e.preventDefault();
+        ipcRenderer.send('twitchLogin');
+    }
+
+    headerCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        UI.closeApp();
+    });
+
+
+</script>
+</html>

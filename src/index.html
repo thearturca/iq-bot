@@ -1,0 +1,294 @@
+<html lang="ru">
+<head>
+    <title>200IQ Bot</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="light-theme"><div class="body">
+    <!-- Loading screen -->
+    <div class="loading-container">
+        <div class="loading-circle-container">
+            <i class="loading-circle"></i>
+        </div>
+        <div class="loading">
+            Загрузка...
+        </div>
+    </div>
+
+    <!-- Notice block -->
+    <div class="notice-container hide" id="notice">
+        <div class="notice-header">
+            <div class="notice-title" id='notice-title'>
+                <h3>Notice-title</h3> 
+            </div>
+        </div>
+        <div class="notice-body" id="notice-body">
+            <p>
+                Notice body
+            </p>
+        </div>
+    </div>
+    <!-- modal window    -->
+    <div id="modal-container" class="modal-container hide">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">
+                <div class="modal-title" id="modal-title">
+                    <h3>modal.title.h3</h3>
+                    <h2>modal.title.h2</h2>  
+                </div>
+                <div class="close-container">
+                    <a class="close" id="close">
+                        <i class="close-icon"></i>
+                    </a>  
+                </div> 
+            </div>
+            <div class="modal-body" id="modal-body">
+
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="left-side">
+                <div class="logo">
+                    200IQ Bot
+                </div>
+                <div class="info" id="info">
+                    <label onclick="btnDisabledToggle()">
+                        <button class="btn-bot-connect" id="btn-bot-connect">Подключить бота</button>
+                        <button class="btn-bot-disconnect hide" id="btn-bot-disconnect" disabled>Отключить бота</a>
+                    </label>
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="username-container" id="username">
+                    username
+                </div>
+                
+                <div class="settings-container">
+                    <a class="settings" id="settings-btn">
+                        <i class="settings-icon"></i>
+                    </a>
+
+                     <!-- Setting dropdown menu -->
+                    <div class="settings-dropdown-container" id="settings-dropdown-menu">
+                        <ul class="settings-dropdown-list">
+                            <li class="settings-dropdown-item first">
+                                <a id="settings">Настройки</a>
+                            </li>
+                            <li class="settings-dropdown-item">
+                                <a>Выйти из аккаунта</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="close-container">
+                    <a class="close" id="close-btn">
+                        <i class="close-icon"></i>
+                    </a>  
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="col-3">
+                <div class="function" id="commands">
+                     <label class="title">
+                         <input type="checkbox" name="commandsState" id="commandsState" value="commands"> 
+                         <span class="checkbox-fake"></span>
+                         <h2>Команды</h2>
+                     </label>
+                    <div class="description">
+                        <p>
+                            Команды, вызываемые через “!command”
+                        </p>
+                    </div>
+                    <div class="settings">
+                        <ul class="settings-list">
+                            <li class="settings-item">
+                                <a id="commandsList">Список команд</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="function">
+                    <label class="title">
+                        <input type="checkbox" name="WIP" id="">
+                        <span class="checkbox-fake"></span>
+                        <h2>WIP</h2>
+                    </label>
+                   <div class="description">
+                       <p>
+                        WIP
+                       </p>
+                   </div>
+                   <div class="settings">
+                       <ul class="settings-list">
+                           <li class="settings-item">
+                               <a>WIP</a>
+                           </li>
+                       </ul>
+                   </div>
+               </div>
+            </div>
+            <div class="col-3">
+                <div class="function" id="iq">
+                    <label class="title">
+                        <input type="checkbox" name="iqState" id="iqState" >
+                        <span class="checkbox-fake"></span>
+                        <h2>IQ-тест</h2>
+                    </label>
+                   <div class="description">
+                       <p>
+                        IQ-тест, основанный на генераторе случайных чисел. Существует топ-5 самых умных и топ-5 самых неумных. Также есть статистика по чату, а именно сколько всего людей протестировалось, сколько раз люди прошли IQ-тест (написали в чат команду !iq test, и получили ответ), и средний IQ чата.
+                       </p>
+                   </div>
+                   <div class="settings">
+                       <ul class="settings-list">
+                           <li class="settings-item">
+                               <a id="settings">Настройки</a>
+                           </li>
+                       </ul>
+                   </div>
+               </div>
+            </div>
+        </div>
+    </main>
+</div></body>
+<script>
+    const electron = require('electron');
+    const {ipcRenderer, remote} = electron; 
+    const UIModule = require('./UI.js');
+    const UI = UIModule.UI;
+    let username = '';
+    let theme = 'light';
+
+    const headerCloseBtn = document.querySelector('header').querySelector('#close-btn');
+    const headerSettingsBtn = document.querySelector('header').querySelector('#settings-btn');
+    const settingsDropdownMenu = document.querySelector('header').querySelector('#settings-dropdown-menu');
+    const headerConnectBtn = document.querySelector('header').querySelector('#btn-bot-connect');
+    const headerDisconnectBtn = document.querySelector('header').querySelector('#btn-bot-disconnect');
+
+    const functionCommands = document.querySelector('main').querySelector('#commands');
+    const functionIq = document.querySelector('main').querySelector('#iq');
+
+    const noticeBlock = document.querySelector('#notice');
+    const modalWindow = document.querySelector('#modal-container');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        ipcRenderer.on('UIInit', (e, args) => {
+            username = args.username;
+
+            theme = args.theme;
+            UI.toggleTheme(theme);
+
+            document.querySelector('#commandsState').checked = args.commandsState;
+            document.querySelector('#iqState').checked = args.iqState;
+            document.querySelector('header').querySelector('#username').innerHTML = username;
+            
+            // document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
+            //     checkbox.disabled = true;
+            // });
+            document.querySelector('body').classList.add('loaded');  
+        });      
+    }); 
+    
+    headerCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        UI.closeApp();
+    });
+
+    headerSettingsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        UI.showSettings(e, settingsDropdownMenu);
+    });
+
+    settingsDropdownMenu.addEventListener('mouseleave', (e) => {
+        settingsDropdownMenu.style = 'display: none';
+    });
+
+    const btnDisabledToggle = () => {
+        headerConnectBtn.disabled ? headerConnectBtn.disabled = false : headerConnectBtn.disabled = true;
+        headerDisconnectBtn.disabled ? headerDisconnectBtn.disabled = false : headerDisconnectBtn.disabled = true;
+    }
+
+    const switchTheme = (target) => {
+        const value = target.value;
+        theme = value;
+        ipcRenderer.send('userConfig', {action: 'switchTheme', value: value});
+        UI.toggleTheme(value);
+    }
+
+    headerConnectBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        UI.showNotice('info', noticeBlock, 'Подключение', 'Попытка подключения...');
+        ipcRenderer.invoke('botConfig', {action: 'connect'}).then((res) => {
+            headerConnectBtn.classList.add('hide');
+            headerDisconnectBtn.classList.remove('hide');
+            
+            // document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
+            //     checkbox.disabled = false;
+            // });
+
+            UI.showNotice('success', noticeBlock, 'Подключение', 'Бот успешно подключен');
+        }).catch((err) => {
+            UI.showNotice('error', noticeBlock, 'Подключение', err);
+            btnDisabledToggle();
+        });
+    });
+
+    headerDisconnectBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        UI.showNotice('info', noticeBlock, 'Отключение', 'Отключаюсь...');
+        ipcRenderer.invoke('botConfig', {action: 'disconnect'}).then((res) => {
+            headerConnectBtn.classList.remove('hide');
+            headerDisconnectBtn.classList.add('hide');
+            // document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
+            //     checkbox.disabled = true;
+            // });
+
+            UI.showNotice('success', noticeBlock, 'Отключение', 'Бот успешно отключен');
+        }).catch((err) => {
+            UI.showNotice('error', noticeBlock, 'Отключение', err);
+            btnDisabledToggle();
+        })
+    });
+
+    modalWindow.querySelector('#modal-header').querySelector('#close').addEventListener('click', (e) =>{
+        e.preventDefault();
+        if(modalWindow.querySelector('#addNewCommand-form') !== null){
+            UI.showModal('commands-list', modalWindow, username);
+        } else{
+            modalWindow.classList.add('hide');
+        }
+        
+    });
+
+    settingsDropdownMenu.querySelector('#settings').addEventListener('click', (e) => {
+        UI.showModal('dropdown-settings', modalWindow, username, theme);
+    });
+
+    functionCommands.querySelector('#commandsList').addEventListener('click', (e) => {
+        UI.showModal('commands-list', modalWindow, username);
+    });
+
+    document.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
+        checkbox.addEventListener('change', (e) => {
+            // e.preventDefault();
+            ipcRenderer.invoke('botConfig', {action: 'functionState', functionName: e.target.name, functionState: e.target.checked}).then((res)=> {
+                // e.target.checked ? e.target.checked = false : e.target.checked = true;
+            }).catch((err) =>{
+                UI.showNotice('error', noticeBlock, 'Ошибка', err);
+            });
+        })
+    })
+
+</script>
+</html>

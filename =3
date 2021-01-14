@@ -1,0 +1,8 @@
++ @octokit/core@3.2.4
+added 4 packages and audited 1173 packages in 27.549s
+
+49 packages are looking for funding
+  run `npm fund` for details
+
+found 16 vulnerabilities (8 low, 2 moderate, 6 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
