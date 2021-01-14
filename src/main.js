@@ -108,7 +108,7 @@ const createWindow = () => {
     { label: 'Open', click:  function(){
       win.show();
   } },
-  { label: 'quit', click:  function(){
+  { label: 'Quit', click:  function(){
       win.closed = true;
       win.close();
   } }
