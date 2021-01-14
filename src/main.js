@@ -11,10 +11,12 @@ if (!fs.existsSync(dir2)){
   fs.mkdirSync(dir2);
 }
 
-if (require('electron-squirrel-startup')) return app.quit();
+
 
 const axios = require('axios');
 const { app, BrowserWindow, Menu, Tray, ipcMain } = require('electron');
+
+if (require('electron-squirrel-startup')) return app.quit();
 const url = require('url');
 const path = require('path');
 const low = require('lowdb');

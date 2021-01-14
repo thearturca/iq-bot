@@ -29,9 +29,13 @@
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
-          "platforms": ["win32"],
+          "platforms": [
+            "win32"
+          ],
           "config": {
-            "platforms": ["win32"],
+            "platforms": [
+              "win32"
+            ],
             "repository": {
               "owner": "thearturca",
               "name": "iq-bot"
@@ -70,6 +74,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
+    "dotenv": "^8.2.0",
     "electron": "11.2.0"
   }
 }
