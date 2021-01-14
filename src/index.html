@@ -183,7 +183,7 @@
     const modalWindow = document.querySelector('#modal-container');
 
     document.addEventListener('DOMContentLoaded', () => {
-        ipcRenderer.on('UIInit', (e, args) => {
+        ipcRenderer.invoke('UIInit', {state: true}).then((args) => {
             username = args.username;
 
             theme = args.theme;

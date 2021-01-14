@@ -58,8 +58,7 @@ class User{
 
 const user = new User();
 
-let tray = null;
-
+let bot;
 
 const loginHtmlpath = url.format({
   pathname: path.join(__dirname, `/login.html`),
@@ -73,10 +72,14 @@ const indexHtmlpath = url.format({
   slashes: true
 });
 
-let win;
+let mainWin;
+let twitchLoginWin;
+let tray = null;
+const iconPath = path.join(__dirname, 'resources', 'fav_ico.ico');
+console.log(__dirname)
 
-const createWindow = () => {
-  win = new BrowserWindow({
+const createMainWin = () => {
+  mainWin = new BrowserWindow({
     width: 1200,
     height: 850,
     resizable: false,
@@ -84,51 +87,59 @@ const createWindow = () => {
     center: true,
     // transparent: true,
     title: '200IQ Bot',
-    // icon: './assets/fav_ico.ico',
+    // icon: iconPath,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  win.loadURL(loginHtmlpath);
-
-  // win.removeMenu();
-
-  win.on('minimize', function (event) {
-      event.preventDefault();
-      win.hide();
-  });
-
-  win.on('restore', function (event) {
-      win.show();
-  });
+    mainWin.loadURL(loginHtmlpath);
   
-  tray = new Tray('./fav_ico.ico');
+  mainWin.removeMenu();
+
+  mainWin.on('minimize', function (event) {
+      event.preventDefault();
+      mainWin.hide();
+  });
+
+  mainWin.on('restore', function (event) {
+    mainWin.show();
+  });
+
+  // mainWin.on('close', (e) =>{
+  //   e.preventDefault();
+  //   mainWin.show();
+  // });
+
+  mainWin.on('closed', function(){
+    app.quit();
+  });
+ 
+  tray = new Tray(iconPath);
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Open', click:  function(){
-      win.show();
+      mainWin.show();
   } },
   { label: 'Quit', click:  function(){
-      win.closed = true;
-      win.close();
+    mainWin.closed = true;
+    app.quit();
   } }
   ])
   tray.setToolTip('200IQ Bot');
   tray.setContextMenu(contextMenu);
   tray.on('double-click', function (event) {
-    win.show();
+    mainWin.show();
   });
-  return win;
 }
 
-const createtwitchLoginWindow = () => {
-  win = new BrowserWindow({
+const createTwitchLoginWin = () => {
+  twitchLoginWin = new BrowserWindow({
     width: 500,
     height: 900,
     resizable: false,
     center: true,
     title: '200IQ Bot',
-    icon: 'fav_ico.ico',
+    // icon: iconPath,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true
@@ -146,27 +157,18 @@ const createtwitchLoginWindow = () => {
       force_verify: true
     }
   });
-  win.loadURL(twitchLoginURL);
-
-  win.removeMenu();
-  
-  return win;
+  twitchLoginWin.loadURL(twitchLoginURL);
+  twitchLoginWin.removeMenu();
 }
 
-// let mainWindow = new createWindow();
-
-const bot = new Bot(user.username, user.password);
-
-let mainWindow = null;
-
 app.on('ready', () => {
-
-  
-
+  createMainWin();
+  bot = new Bot(user.username, user.password);
   ipcMain.handle('checkUserforLogin',  (event, args) => {
     let result = true;
     if (args['state']){
-      mainWindow.loadURL(indexHtmlpath);
+      mainWin.loadURL(indexHtmlpath);
+      
       return result;
     }
     if (((user.password == '') || (user.username == '')) || ((typeof user.password !== 'string') || (typeof user.username !== 'string'))){
@@ -175,20 +177,16 @@ app.on('ready', () => {
     return result;
   });
 
-  mainWindow = createWindow();
-
-  mainWindow.webContents.on('dom-ready', () => {
-    mainWindow.webContents.send('UIInit', {
-      username: user.username, 
+    ipcMain.handle('UIInit', (e, args)=>{
+      result = {username: user.username, 
       theme: user.theme, 
       commandsState: bot.config().commandsState, 
       iqState: bot.config().iqState
-    })
-  });
-  
-  mainWindow.on('closed', function(){
-    app.quit();
-  });
+      };
+      return result;
+    });
+
+
 
   ipcMain.handle('botConfig', async (e, args) => {
     let res = undefined;
@@ -224,7 +222,7 @@ app.on('ready', () => {
   ipcMain.on('UI', (e, args) =>{
     switch (args.action) {
       case 'close':
-        mainWindow.hide();
+        mainWin.hide();
       break;
     }
   });
@@ -255,23 +253,24 @@ app.on('window-all-closed', () => {
 })
 
 app.on('quit', () => {
-  mainWindow.close();
+  mainWin.close();
   bot.stop();
 })
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    mainWindow = createWindow();
+    mainWin = createWindow();
   }
 });
 
 ipcMain.on('twitchLogin', function() {
-  let twitchLoginWindow = createtwitchLoginWindow();
-  twitchLoginWindow.webContents.on('will-redirect', function (event, newUrl) {
+  createTwitchLoginWin();
+  twitchLoginWin.webContents.on('will-redirect', function (event, newUrl) {
     if (!(newUrl.startsWith("http://localhost"))){return}
  
    let oauthHash = newUrl.substr(1);
    let accessToken = oauthHash.substr(oauthHash.indexOf('access_token=')).split('&')[0].split('=')[1];
+   user.password = accessToken;
  
    twitchConfig.get('twitch').assign({
      password: accessToken
@@ -284,16 +283,18 @@ ipcMain.on('twitchLogin', function() {
        username: response.data['login']
      }).write();
      user.username = response.data['login'];
+     bot = new Bot(user.username, user.password);
+     mainWin.loadURL(indexHtmlpath);
+     twitchLoginWin.close();
    }, (error) => {
      console.log(error);
    });
-   mainWindow.loadURL(indexHtmlpath);
-   twitchLoginWindow.close();
+  
  
  });
 
-  twitchLoginWindow.on('closed', function(){
-    twitchLoginWindow = null;
+ twitchLoginWin.on('closed', function(){
+  twitchLoginWin = null;
   });
 
 });

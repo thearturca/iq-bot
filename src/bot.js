@@ -329,6 +329,7 @@ class Bot {
         this._client = new tmi.client(options);
 
         this._client.on('message', (channel, user, message, self) => {
+            if(self){return};
             let messagelow = message.trim();
             messagelow = messagelow.toLowerCase();
             if(messagelow.startsWith('!')){
