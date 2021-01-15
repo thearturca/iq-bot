@@ -4,6 +4,8 @@ const path = require('path');
 const { app, BrowserWindow, Menu, Tray, ipcMain } = require('electron');
 const keytar = require('keytar')
 
+if (require('electron-squirrel-startup')) return app.quit();
+
 const appName = '200iqbot';
 if (!fs.existsSync(path.join(app.getPath('documents'), appName))){
   fs.mkdirSync(path.join(app.getPath('documents'), appName));
@@ -21,9 +23,6 @@ if (!fs.existsSync(dirDB)){
 }
 
 const axios = require('axios');
-
-if (require('electron-squirrel-startup')) return app.quit();
-console.log(app.getPath('documents'));
 
 const gotTheLock = app.requestSingleInstanceLock()
 
