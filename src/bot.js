@@ -300,7 +300,7 @@ class Bot {
             this.target = this._config.target;
         }
 
-        const adapterCommandsDB = new FileSync(`./db/commands-${this.username}.json`);
+        const adapterCommandsDB = new FileSync(path.join(dirDB, `commands-${this.username}.json`));
         this._commandsDB = low(adapterCommandsDB);
         this._commandsDB.defaults({
             commands:[
