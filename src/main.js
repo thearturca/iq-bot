@@ -54,14 +54,16 @@ twitchConfig.defaults ({
 
 class User{
   constructor(){
-    console.log(twitchConfig.get('twitch').value())
     this.username = twitchConfig.get('twitch').value().username;
     this.username = this.username.trim();
     if(this.username == ''){
       this.password = '';
     }else{
-      this.password = keytar.getPassword(appName, this.username);
-      this.password = this.password.trim();
+      keytar.getPassword(appName, this.username).then((res)=>{
+        this.password = res;
+        console.log(this.password) 
+      });
+       
     }
     
    
@@ -76,8 +78,26 @@ class User{
   }
 }
 
-const user = new User();
 
+const logout = () =>{
+  return new Promise((resolve, reject) =>{
+    try{
+      bot.stop();
+      bot = null;
+      user = null;
+      twitchConfig.get('twitch').assign({username: ''}).write();
+      user = new User;
+      mainWin.loadURL(loginHtmlpath);
+      resolve(true);
+    }catch(err){
+      reject(err)
+    }
+    
+
+  })
+}
+
+let user;
 let bot;
 
 const loginHtmlpath = url.format({
@@ -182,6 +202,7 @@ const createTwitchLoginWin = () => {
 
 app.on('ready', () => {
   createMainWin();
+  user = new User;
   bot = new Bot(user.username, user.password);
   ipcMain.handle('checkUserforLogin',  (event, args) => {
     let result = true;
@@ -212,8 +233,7 @@ app.on('ready', () => {
     switch (args.action){
       case 'connect':
         res = await bot.start();
-        
-          return {res}
+        return {res}
       case 'disconnect':
         res = await bot.stop();
         return {res}
@@ -232,6 +252,9 @@ app.on('ready', () => {
       case 'removeCommand':
         res = bot.removeCommand(args.commandName);
         return res
+      case 'logout':
+        res = await logout();
+        return res;
       default:
       return Promise.reject('Неизвестная функция');
     }

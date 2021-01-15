@@ -79,7 +79,7 @@
                                 <a id="settings">Настройки</a>
                             </li>
                             <li class="settings-dropdown-item">
-                                <a>Выйти из аккаунта</a>
+                                <a id="logout">Выйти из аккаунта</a>
                             </li>
                         </ul>
                     </div>
@@ -273,6 +273,10 @@
 
     settingsDropdownMenu.querySelector('#settings').addEventListener('click', (e) => {
         UI.showModal('dropdown-settings', modalWindow, username, theme);
+    });
+
+    settingsDropdownMenu.querySelector('#logout').addEventListener('click', (e) => {
+        UI.showConfirmationModal(document.querySelector('body') ,{action: 'logout'});
     });
 
     functionCommands.querySelector('#commandsList').addEventListener('click', (e) => {

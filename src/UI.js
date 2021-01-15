@@ -43,6 +43,17 @@ const { ipcRenderer } = require("electron")
                 </select>
             </div>`;
             break;
+            case 'logout':
+                window.querySelector('#modal-header').querySelector('h3').innerHTML = username;
+                window.querySelector('#modal-header').querySelector('h2').innerHTML = 'Выход';
+                window.querySelector('#modal-body').innerHTML = `<div class="select">
+                <label for="theme">Тема</label>
+                <select name="setTheme" id="theme" onchange="switchTheme(this)">
+                    <option value="light" ${theme === 'light' ? 'selected="selected"' : ''}>Светлая</option>
+                    <option value="dark" ${theme === 'dark' ? 'selected="selected"' : ''}>Тёмная</option>
+                </select>
+            </div>`;
+            break;
             case 'commands-list':
                 window.querySelector('#modal-header').querySelector('h3').innerHTML = 'Команды';
                 window.querySelector('#modal-header').querySelector('h2').innerHTML = 'Список команд';
@@ -222,6 +233,15 @@ const { ipcRenderer } = require("electron")
     }
 
     static showConfirmationModal(window, settings){
+        let bodyString;
+        switch (settings.action){
+            case 'removeCommand':
+                bodyString = `Вы точно хотите удалить команду "${settings.commandName}"?`;
+            break;
+            case 'logout':
+                bodyString = `Вы уверены, что хотите выйти из аккаунта?`
+                break;
+        }
         const confirmationModal = `<div id="sub-modal-container" class="modal-container">
         <div class="modal-content">
             <div class="modal-header" id="sub-modal-header">
@@ -235,7 +255,7 @@ const { ipcRenderer } = require("electron")
                 </div> 
             </div>
             <div class="modal-body" id="sub-modal-body">
-                <span style="display: block; margin-bottom: 24px">Вы точно хотите удалить команду "${settings.commandName}"?</span>
+                <span style="display: block; margin-bottom: 24px">${bodyString}</span>
                 <button class="btn btn-second" id="btn-cancel">отмена</button>
                 <button class="btn" style="width: 120px" id="btn-yes">Да</button>
             </div>
@@ -256,9 +276,18 @@ const { ipcRenderer } = require("electron")
         window.querySelector('#sub-modal-body').querySelector('#btn-yes').addEventListener('click', (e)=>{
             e.preventDefault();
             ipcRenderer.invoke('botConfig', settings).then((res)=>{
-                UI.showNotice('success', noticeBlock, 'Успех', `Команда "${settings.commandName}" успешно удалена`);
-                UI.showModal('commands-list', modalWindow, username);
-                window.querySelector('#sub-modal-container').classList.add('hide');
+                switch(settings.action){
+                    case 'removeCommand':
+                        UI.showNotice('success', noticeBlock, 'Успех', `Команда "${settings.commandName}" успешно удалена`);
+                        UI.showModal('commands-list', modalWindow, username);
+                        window.querySelector('#sub-modal-container').classList.add('hide');
+                    break;
+                    case 'logout':
+                        window.querySelector('#sub-modal-container').classList.add('hide');
+                        break;
+                }
+
+                
             }).catch((err) =>{
                 UI.showNotice('error', noticeBlock, 'Ошибка', err);
             })
