@@ -48,7 +48,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "200IQBot"
+            "name": "200IQBot",
+            "iconUrl": "src/resources/fav_ico.ico"
           }
         },
         {
