@@ -4,6 +4,7 @@ const FileSync = require('lowdb/adapters/FileSync');
 const _ = require('lodash');
 const path = require('path');
 const { app } = require('electron');
+const { log } = require('console');
 
 const dirConfig = path.join(app.getPath('documents'), '200iqbot', 'config');
 const dirDB = path.join(app.getPath('documents'), '200iqbot', 'db');
@@ -310,11 +311,8 @@ class Bot {
 
         this._iqTest = new IqTest(this.target); 
 
-        
-
         this._state = true;
         this._CooldownTime = Date.now();
-        
 
         const options = {
             options: {
@@ -326,7 +324,7 @@ class Bot {
             },
             identity: {
                 username: this.username,
-                password: this._password
+                password: `${this._password}`
             },
             channels: [this.target]
         };

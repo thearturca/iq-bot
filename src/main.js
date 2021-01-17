@@ -21,6 +21,8 @@ if (!fs.existsSync(dirDB)){
 }
 
 const axios = require('axios');
+const { log } = require('console');
+const { resolve } = require('path');
 
 if (require('electron-squirrel-startup')) return app.quit();
 
@@ -55,17 +57,8 @@ class User{
   constructor(){
     this.username = twitchConfig.get('twitch').value().username;
     this.username = this.username.trim();
-    if(this.username == ''){
-      this.password = '';
-    }else{
-      keytar.getPassword(appName, this.username).then((res)=>{
-        this.password = res;
-        console.log(this.password) 
-      });
-       
-    }
     
-   
+  
     const UISetting = twitchConfig.get('UI');
 
     if (UISetting.find({title: this.username}).value() === undefined){
@@ -74,6 +67,25 @@ class User{
       this.theme = UISetting.find({title: this.username}).value().theme;
     }
 
+  }
+  setPassword(){
+    return new Promise((resolve, reject)=>{
+      try{
+        if(this.username == ''){
+      this.password = '';
+    }else{
+      keytar.getPassword(appName, this.username).then((res)=>{
+        this.password = res;
+        resolve(true)
+      });
+       
+    }
+      }
+      catch(e){
+        reject(e)
+      }
+      
+    })
   }
 }
 
@@ -202,7 +214,10 @@ const createTwitchLoginWin = () => {
 app.on('ready', () => {
   createMainWin();
   user = new User;
-  bot = new Bot(user.username, user.password);
+  user.setPassword().then(()=>{
+   bot = new Bot(user.username, user.password); 
+  })
+  
   ipcMain.handle('checkUserforLogin',  (event, args) => {
     let result = true;
     if (args['state']){
