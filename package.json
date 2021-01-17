@@ -1,7 +1,7 @@
 {
   "name": "iq-bot",
   "productName": "200iqbot",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Простой бот для Twitch.tv",
   "main": "src/main.js",
   "repository": {
@@ -24,7 +24,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "src/resources/fav_ico.ico"
+        "icon": "./src/resources/fav_ico.ico"
       },
       "publishers": [
         {
@@ -48,8 +48,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "200IQBot",
-            "iconUrl": "src/resources/fav_ico.ico"
+            "name": "200IQBot"
+            
           }
         },
         {
