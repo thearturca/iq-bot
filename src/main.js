@@ -1,4 +1,3 @@
-require('update-electron-app')();
 const fs = require('fs');
 const path = require('path');
 const { app, BrowserWindow, Menu, Tray, ipcMain } = require('electron');
@@ -31,6 +30,8 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
+
+require('update-electron-app')();
 
 const url = require('url');
 const low = require('lowdb');
