@@ -30,9 +30,6 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
-
-require('update-electron-app')();
-
 const url = require('url');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -214,6 +211,7 @@ const createTwitchLoginWin = () => {
 
 app.on('ready', () => {
   createMainWin();
+  require('update-electron-app')();
   user = new User;
   user.setPassword().then(()=>{
    bot = new Bot(user.username, user.password); 
