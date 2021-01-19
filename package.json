@@ -24,7 +24,8 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./src/resources/fav_ico.ico"
+        "icon": "./src/resources/fav_ico.ico",
+        "asar": true
       },
       "publishers": [
         {
