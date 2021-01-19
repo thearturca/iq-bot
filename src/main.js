@@ -70,19 +70,17 @@ class User{
     return new Promise((resolve, reject)=>{
       try{
         if(this.username == ''){
-      this.password = '';
-    }else{
-      keytar.getPassword(appName, this.username).then((res)=>{
-        this.password = res;
-        resolve(true)
-      });
-       
-    }
+        this.password = '';
+        } else{
+          keytar.getPassword(appName, this.username).then((res)=>{
+            this.password = res;
+            resolve(true)
+          });
+        }
       }
       catch(e){
         reject(e)
       }
-      
     })
   }
 }

@@ -86,7 +86,7 @@ class IqTest {
         const curTime = Date.now();
         const tryNmax = this._config.MaxTry;
         const users = this._iqDB.get('users');
-        const usernameDB = users.find({username: user["display-name"]});
+        const usernameDB = users.find({username: user["display-name"].toLowerCase()});
         const iqCDtime = this._config.CDtime * 1000 * 60 * 60; //hrs * millisec * sec * min
     
         const iq_rng = (user) => {
@@ -209,7 +209,7 @@ class IqTest {
 
     reply(args, user){
         const users = this._iqDB.get('users');
-        const usernameDB = users.find({username: user["display-name"]});
+        const usernameDB = users.find({username: user["display-name"].toLowerCase()});
         switch (args[1]) {
             case 'test':
             return this.rollIq(user);
