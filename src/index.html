@@ -188,7 +188,7 @@
 
             theme = args.theme;
             UI.toggleTheme(theme);
-
+            document.querySelector('header').querySelector('.logo'). innerHTML += `v${ args.ver}`
             document.querySelector('#commandsState').checked = args.commandsState;
             document.querySelector('#iqState').checked = args.iqState;
             document.querySelector('header').querySelector('#username').innerHTML = username;

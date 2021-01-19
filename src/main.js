@@ -232,7 +232,8 @@ app.on('ready', () => {
       result = {username: user.username, 
       theme: user.theme, 
       commandsState: bot.config().commandsState, 
-      iqState: bot.config().iqState
+      iqState: bot.config().iqState,
+      ver: app.getVersion()
       };
       return result;
     });
