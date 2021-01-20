@@ -66,6 +66,7 @@ class User{
     }
 
   }
+
   setPassword(){
     return new Promise((resolve, reject)=>{
       try{
@@ -83,6 +84,7 @@ class User{
       }
     })
   }
+  
 }
 
 
@@ -316,7 +318,8 @@ app.on('quit', () => {
 app.on('second-instance', (event, commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWin) {
-    if (mainWin.isMinimized()) mainWin.restore()
+    if (mainWin.isMinimized()) mainWin.restore();
+    if (!mainWin.isVisible()) mainWin.show();
     mainWin.focus()
   }
 })

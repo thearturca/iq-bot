@@ -1,7 +1,7 @@
 {
   "name": "iq-bot",
   "productName": "200iqbot",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Простой бот для Twitch.tv",
   "main": "src/main.js",
   "repository": {
