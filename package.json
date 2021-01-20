@@ -50,7 +50,6 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "200IQBot"
-            
           }
         },
         {

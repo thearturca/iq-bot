@@ -180,6 +180,8 @@ const createMainWin = () => {
 
 const createTwitchLoginWin = () => {
   twitchLoginWin = new BrowserWindow({
+    parent: mainWin,
+    modal: true,
     width: 500,
     height: 900,
     resizable: false,
