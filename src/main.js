@@ -180,8 +180,10 @@ const createMainWin = () => {
 
 const createTwitchLoginWin = () => {
   twitchLoginWin = new BrowserWindow({
+    parent: mainWin,
     width: 500,
     height: 900,
+    modal: true,
     resizable: false,
     center: true,
     title: '200IQ Bot',
