@@ -46,7 +46,8 @@ twitchConfig.defaults ({
   UI:[
     {
       title: 'default',
-      theme: 'light' 
+      theme: 'light',
+      mainWinClose: "hide" 
     }
   ] 
 }).write();
@@ -60,9 +61,11 @@ class User{
     const UISetting = twitchConfig.get('UI');
 
     if (UISetting.find({title: this.username}).value() === undefined){
-      this.theme = UISetting.find({title: 'default'}).value().theme;
+      // this.theme = UISetting.find({title: 'default'}).value().theme;
+      this.UI = UISetting.find({title: 'default'}).value();
     } else {
-      this.theme = UISetting.find({title: this.username}).value().theme;
+      // this.theme = UISetting.find({title: this.username}).value().theme;
+      this.UI =  UISetting.find({title: this.username}).value();
     }
 
   }
@@ -186,6 +189,7 @@ const createTwitchLoginWin = () => {
     modal: true,
     width: 500,
     height: 900,
+    modal: true,
     resizable: false,
     center: true,
     title: '200IQ Bot',
@@ -234,7 +238,7 @@ app.on('ready', () => {
 
     ipcMain.handle('UIInit', (e, args)=>{
       result = {username: user.username, 
-      theme: user.theme, 
+      UI: user.UI,
       commandsState: bot.config().commandsState, 
       iqState: bot.config().iqState,
       ver: app.getVersion()
@@ -280,15 +284,30 @@ app.on('ready', () => {
   ipcMain.on('UI', (e, args) =>{
     switch (args.action) {
       case 'close':
+        switch(user.UI.mainWinClose){
+          case 'hide':
+            mainWin.hide();
+          break;
+
+          case 'close':
+            mainWin.close();
+          break;
+
+          default:
+            mainWin.hide();
+          break;
+        }
+      break;
+      case 'hide':
         mainWin.hide();
       break;
     }
   });
   
   ipcMain.on('userConfig', (e, args) => {
+    const UIUserSettings = twitchConfig.get('UI').find({title: user.username});
     switch (args.action) {
       case 'switchTheme':
-        const UIUserSettings = twitchConfig.get('UI').find({title: user.username});
         if (UIUserSettings.value() === undefined){
           twitchConfig.get('UI').push({
             title: user.username,
@@ -297,7 +316,9 @@ app.on('ready', () => {
         } else {
           UIUserSettings.assign({theme: args.value}).write();
         }
-        
+      break;
+      case 'switchMainWinClose':
+          UIUserSettings.assign({mainWinClose: args.value}).write();
       break;
     }
   });

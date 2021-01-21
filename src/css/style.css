@@ -400,6 +400,29 @@ textarea {
     background-size: 20px;
 }
 
+.hide-container{
+    margin-left: auto;
+    margin-right: 22px;
+}
+
+.hide-btn{
+    cursor: pointer;
+}
+.hide-icon{
+    width: 32px;
+    height: 32px;
+    background: no-repeat url("../img/icon_hide.png");
+    background-size: 32px;
+    background-position: center, center;
+    display: block;
+}
+
+.hide-icon:hover{
+    background: no-repeat url("../img/icon_hide_hover.png");
+    background-size: 32px;
+    background-position: center, center;
+}
+
 .delete-container{
     margin-left: auto;
 }
@@ -481,7 +504,7 @@ body.dark-theme .modal-content{
 
 .modal-body .select{
     display: block;
-    margin-top: 3px;
+    margin-top: 12px;
 
 }
 
