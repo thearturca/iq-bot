@@ -7,6 +7,12 @@ const { ipcRenderer } = require("electron")
         });;
     }
 
+    static HideApp(){
+        ipcRenderer.send('UI', {action: 'hide'}).catch((err) => {
+            UI.showNotice('error', noticeBlock, 'Error', err);
+        });;
+    }
+
     static toggleDarkTheme(){
         document.querySelector('body').classList.add('dark-theme');
     }
@@ -29,28 +35,38 @@ const { ipcRenderer } = require("electron")
         }
     }
 
-    static showModal(type, window, username, theme){
+    static toggleHideBtn(mainWinClose){
+        switch(mainWinClose){
+            case "close":
+                document.querySelector('header').querySelector('#hide-btn').style = 'display: block;'
+            break;
+            case "hide":
+                document.querySelector('header').querySelector('#hide-btn').style = 'display: none;'
+            break;
+            default:
+                document.querySelector('header').querySelector('#hide-btn').style = 'display: none;'
+            break;
+        }
+    }
+
+    static showModal(type, window, username, theme, mainWinClose){
         theme === undefined ? theme = 'light' : theme = theme;
         switch (type){
             case 'dropdown-settings':
                 window.querySelector('#modal-header').querySelector('h3').innerHTML = username;
                 window.querySelector('#modal-header').querySelector('h2').innerHTML = 'Настройки';
-                window.querySelector('#modal-body').innerHTML = `<div class="select">
+                window.querySelector('#modal-body').innerHTML = `<div class="select first">
                 <label for="theme">Тема</label>
                 <select name="setTheme" id="theme" onchange="switchTheme(this)">
                     <option value="light" ${theme === 'light' ? 'selected="selected"' : ''}>Светлая</option>
                     <option value="dark" ${theme === 'dark' ? 'selected="selected"' : ''}>Тёмная</option>
                 </select>
-            </div>`;
-            break;
-            case 'logout':
-                window.querySelector('#modal-header').querySelector('h3').innerHTML = username;
-                window.querySelector('#modal-header').querySelector('h2').innerHTML = 'Выход';
-                window.querySelector('#modal-body').innerHTML = `<div class="select">
-                <label for="theme">Тема</label>
-                <select name="setTheme" id="theme" onchange="switchTheme(this)">
-                    <option value="light" ${theme === 'light' ? 'selected="selected"' : ''}>Светлая</option>
-                    <option value="dark" ${theme === 'dark' ? 'selected="selected"' : ''}>Тёмная</option>
+            </div>
+            <div class="select">
+                <label for="setMainWinClose">Поведение кнопки "закрыть"</label>
+                <select name="setMainWinClose" id="mainWinClose" onchange="switchMainWinClose(this)">
+                    <option value="close" ${mainWinClose === 'close' ? 'selected="selected"' : ''}>Закрыть приложение</option>
+                    <option value="hide" ${mainWinClose === 'hide' ? 'selected="selected"' : ''}>Скрыть в трей</option>
                 </select>
             </div>`;
             break;
