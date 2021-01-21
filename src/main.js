@@ -69,6 +69,7 @@ class User{
     }
 
   }
+
   setPassword(){
     return new Promise((resolve, reject)=>{
       try{
@@ -86,6 +87,7 @@ class User{
       }
     })
   }
+  
 }
 
 
@@ -184,6 +186,7 @@ const createMainWin = () => {
 const createTwitchLoginWin = () => {
   twitchLoginWin = new BrowserWindow({
     parent: mainWin,
+    modal: true,
     width: 500,
     height: 900,
     modal: true,
@@ -336,7 +339,8 @@ app.on('quit', () => {
 app.on('second-instance', (event, commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWin) {
-    if (mainWin.isMinimized()) mainWin.restore()
+    if (mainWin.isMinimized()) mainWin.restore();
+    if (!mainWin.isVisible()) mainWin.show();
     mainWin.focus()
   }
 })

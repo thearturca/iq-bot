@@ -18,7 +18,8 @@ botConfig.defaults ({
             title: 'default',
             target: 'default',
             iqState: false,
-            commandsState: false
+            commandsState: false,
+            soundCommandsState: true
         },
     ],
     iqConfig:[
@@ -339,6 +340,16 @@ class Bot {
                 if (this._config.commandsState){
                     const subMessage = messagelow.substr(1).split(' ');
                     const commandFromMessage = subMessage[0];
+                    if(commandFromMessage === "commands"){
+                        let resStr = "";
+                        const allCommands = this._commandsDB.get('commands').value()
+                        allCommands.forEach((e, i)=>{
+                            resStr += `!${e.command}`
+                            if(i<allCommands.length-1){ resStr += ", "}
+                        });
+                        this._client.say(this.target, resStr);
+                        return
+                    }
                     const commandFromDB = this._commandsDB.get('commands').find({command: [commandFromMessage]}).value();
                     if (commandFromDB !== undefined){
                         if (commandFromDB.state){
