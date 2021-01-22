@@ -411,14 +411,16 @@ class Bot {
     addCommand(newCommandName, newCommandDescription){
         return new Promise((resolve, reject) =>{
             let commandMatch = false;
+            let commandMatchStr = '';
             newCommandName.forEach(commandName => {
                 const checkCommand = this._commandsDB.get('commands').find({command: [commandName]}).value();
-                if (checkCommand !== undefined){
+                if (checkCommand !== undefined || commandName === "commands"){
                     commandMatch = true;
+                    commandMatchStr = commandName;
                 }
             });
             if (commandMatch){
-                reject('Команда уже существует');
+                reject(`Команда "${commandMatchStr}" уже существует`);
             }else{
                 this._commandsDB.get('commands').push({
                     command: newCommandName,
