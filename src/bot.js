@@ -341,7 +341,7 @@ class Bot {
                     const subMessage = messagelow.substr(1).split(' ');
                     const commandFromMessage = subMessage[0];
                     if(commandFromMessage === "commands"){
-                        let resStr = "";
+                        let resStr = "Список команд: ";
                         const allCommands = this._commandsDB.get('commands').value()
                         allCommands.forEach((e, i)=>{
                             resStr += `!${e.command}`
