@@ -88,6 +88,8 @@ typings/
 # Electron-Forge
 out/
 
+#  App config files
 config/
-
 db/
+
+keytartest.js
