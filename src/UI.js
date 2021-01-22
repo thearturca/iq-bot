@@ -65,7 +65,7 @@ const { ipcRenderer } = require("electron")
             <div class="select">
                 <label for="setMainWinClose">Поведение кнопки "закрыть"</label>
                 <select name="setMainWinClose" id="mainWinClose" onchange="switchMainWinClose(this)">
-                    <option value="hide" ${mainWinClose === 'hide' ? 'selected="selected"' : ''}>Скрыть в трей</option>
+                    <option value="hide" ${mainWinClose === 'hide' ? 'selected="selected"' : ''}>Свернуть в трей</option>
                     <option value="close" ${mainWinClose === 'close' ? 'selected="selected"' : ''}>Закрыть приложение</option>
                 </select>
             </div>`;
