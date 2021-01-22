@@ -343,6 +343,7 @@ class Bot {
                     if(commandFromMessage === "commands"){
                         let resStr = "Список команд: ";
                         const allCommands = this._commandsDB.get('commands').value()
+                        if (allCommands.length === 0){return}
                         allCommands.forEach((e, i)=>{
                             resStr += `!${e.command}`
                             if(i<allCommands.length-1){ resStr += ", "}
