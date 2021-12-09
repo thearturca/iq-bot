@@ -20,8 +20,6 @@ if (!fs.existsSync(dirDB)){
 }
 
 const axios = require('axios');
-const { log } = require('console');
-const { resolve } = require('path');
 
 if (require('electron-squirrel-startup')) return app.quit();
 
@@ -29,7 +27,8 @@ const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
   app.quit()
-} else {
+}
+
 const url = require('url');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -189,7 +188,6 @@ const createTwitchLoginWin = () => {
     modal: true,
     width: 500,
     height: 900,
-    modal: true,
     resizable: false,
     center: true,
     title: '200IQ Bot',
@@ -206,7 +204,7 @@ const createTwitchLoginWin = () => {
     query: {
       response_type: "token",
       redirect_uri:  "http://localhost",
-      scope: "channel:read:redemptions user:read:email chat:edit chat:read",
+      scope: "channel:read:redemptions channel:manage:redemptions user:read:email chat:edit chat:read",
       client_id: "9vjnbv842m36gz321gcwvvwoui40l1",
       force_verify: true
     }
@@ -353,7 +351,7 @@ app.on('activate', () => {
 
 ipcMain.on('twitchLogin', function() {
   createTwitchLoginWin();
-  twitchLoginWin.webContents.on('will-redirect', function (event, newUrl) {
+  twitchLoginWin.webContents.on('will-navigate', function (event, newUrl) {
     if (!(newUrl.startsWith("http://localhost"))){return}
  
    let oauthHash = newUrl.substr(1);
@@ -383,6 +381,3 @@ ipcMain.on('twitchLogin', function() {
   });
 
 });
-
-
-}

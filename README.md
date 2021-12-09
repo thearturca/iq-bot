@@ -1,2 +1,2 @@
 # iq-bot
-Простой бот для Twitch.tv
+Бот для Twitch.tv
